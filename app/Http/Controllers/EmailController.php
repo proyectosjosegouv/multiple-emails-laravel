@@ -7,9 +7,14 @@ use Illuminate\Support\Facades\Mail;
 
 class EmailController extends Controller
 {
-    public function enviar(Request $request){
+    
+    public function create(){
+        return view('form');
+    }
+    
+    public function send(Request $request){
         
-        $emails_destinos = explode(',', $request->emails_destinos);
+        $emails_destinos = explode(',', $request->destinos);
 
         foreach($emails_destinos as $email_destino){
 
@@ -17,10 +22,10 @@ class EmailController extends Controller
 
             if(filter_var($email_destino, FILTER_VALIDATE_EMAIL)){
 
-                Mail::send('email.presentacion', $request->all() , 
+                Mail::send('email.format', $request->all() , 
                             function($message) use ($email_destino, $request){
 
-                                $message->from($request->email_emisor, $request->nombre_emisor);
+                                $message->from($request->emisor_correo, $request->emisor_correo);
                                 $message->to($email_destino)->subject($request->asunto);
 
                 } );
@@ -28,5 +33,6 @@ class EmailController extends Controller
             }
         }        
 
+        return view('successfulSend');
     }
 }
